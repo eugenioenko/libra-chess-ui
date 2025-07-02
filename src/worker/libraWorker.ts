@@ -1,7 +1,7 @@
 // libraWorker.ts - Service Worker for Libra WASM
 
 // @ts-ignore
-importScripts("/public/wasm_exec.js");
+importScripts("/libra-chess-ui/wasm_exec.js");
 
 // Declare the Libra WASM functions (will be set after WASM loads)
 let libraFromFEN: ((fen: string) => void) | undefined;
@@ -14,7 +14,7 @@ let libraIterativeDeepeningSearch: ((ms: number) => string) | undefined;
 async function initWasmLibra() {
   // @ts-ignore
   const go = new (self as any).Go();
-  const wasm = await fetch("/public/libra.wasm");
+  const wasm = await fetch("/libra-chess-ui/libra.wasm");
   const wasmBuffer = await wasm.arrayBuffer();
   const { instance } = await WebAssembly.instantiate(
     wasmBuffer,
