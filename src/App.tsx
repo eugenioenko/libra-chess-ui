@@ -70,16 +70,16 @@ export function App() {
   }
 
   async function calculateMoveAsync(): Promise<void> {
-    let duration = 300;
+    let duration = 1000;
     switch (timeControl) {
       case 'bullet':
-        duration = 300;
+        duration = 1000;
         break;
       case 'blitz':
-        duration = 900;
+        duration = 3000;
         break;
       case 'rapid':
-        duration = 3000;
+        duration = 9000;
         break;
     }
     const move = await libraWorkerClient.libraIterativeDeepeningSearch(duration);

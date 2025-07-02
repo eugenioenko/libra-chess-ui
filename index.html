@@ -8,19 +8,7 @@
   </head>
   <body class="m-0 p-0 h-dvh flex md:items-center md:justify-center">
     <div id="root" class="max-w-[840px] w-full"></div>
-    <script>
-      async function initWasmLibra() {
-        const go = new Go();
-        result = await WebAssembly.instantiateStreaming(
-          fetch(`libra.wasm?v3`),
-          go.importObject
-        );
-        go.run(result.instance);
-        await WebAssembly.instantiate(result.module, go.importObject);
-      }
 
-      initWasmLibra();
-    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

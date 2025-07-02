@@ -14,7 +14,7 @@ let libraIterativeDeepeningSearch: ((ms: number) => string) | undefined;
 async function initWasmLibra() {
   // @ts-ignore
   const go = new (self as any).Go();
-  const wasm = await fetch("/libra-chess-ui/libra.wasm");
+  const wasm = await fetch("/libra-chess-ui/libra.wasm?v4");
   const wasmBuffer = await wasm.arrayBuffer();
   const { instance } = await WebAssembly.instantiate(
     wasmBuffer,
