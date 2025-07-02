@@ -1,69 +1,73 @@
-# React + TypeScript + Vite
+# Libra Chess UI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web interface for the [Libra Chess Engine](https://github.com/eugenioenko/libra-chess), compiled to WebAssembly (WASM).
 
-Currently, two official plugins are available:
+## ⚖️ [Play against Libra Engine!](https://eugenioenko.github.io/libra-chess-ui)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Overview
 
-## Expanding the ESLint configuration
+Libra Chess UI is a React-based frontend for interacting with the Libra Chess Engine, a UCI-compliant chess engine written in Go. The engine is compiled to WebAssembly, allowing users to play against Libra directly in their browser with no server required.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Play chess in your browser** against Libra Chess.
+- **Powered by Go + WASM:** The backend engine runs entirely client-side via WebAssembly.
+- **Modern UI:** Built with React and Tailwind CSS for a responsive, clean experience.
+- **Non-blocking move search:** Uses service workers during move search to avoid blocking the JavaScript event loop, ensuring smooth UI responsiveness.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## Getting Started
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18+ recommended)
+- [pnpm](https://pnpm.io/) (or use npm/yarn)
+
+### Installation
+
+```bash
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Running the Development Server
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm dev
 ```
+
+Open [http://localhost:5173](http://localhost:5173) to view the app in your browser.
+
+### Building for Production
+
+```bash
+pnpm build
+```
+
+The static site will be output to the `dist/` directory.
+
+---
+
+## Project Structure
+
+- `src/` — React components, styles, and main app logic
+- `public/` — Static assets, including `libra.wasm` and WASM loader
+- `src/worker/` — Web worker and WASM client integration
+
+---
+
+## How It Works
+
+- The Go-based Libra Chess Engine is compiled to WebAssembly (`libra.wasm`).
+- The UI loads the WASM binary and communicates with it via a web worker (`libraWorker.ts`).
+- All chess logic and move validation are handled by the engine; the UI manages user interaction and display.
+
+---
+
+## Contributing
+
+Contributions are welcome! Please open issues or pull requests for bug fixes, improvements, or new features.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
