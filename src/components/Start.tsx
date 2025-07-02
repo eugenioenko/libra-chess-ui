@@ -23,7 +23,7 @@ export function Start({ playerColor, setPlayerColor, timeControl, setTimeControl
           <select value={timeControl} onChange={e => setTimeControl(e.target.value as 'bullet' | 'blitz' | 'rapid')} className="bg-zinc-700 text-white rounded px-2 py-1">
             <option value="bullet">Bullet (1+0)</option>
             <option value="blitz">Blitz (3+0)</option>
-            <option value="rapid">Rapid (10+0)</option>
+            <option value="rapid">Rapid (15+0)</option>
           </select>
         </div>
         <button

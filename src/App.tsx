@@ -53,8 +53,9 @@ export function App() {
       if (chess.in_checkmate()) {
         winner = currentTurn === 'white' ? 'black' : 'white';
         setGameStatus(winner);
+      } else {
+        setGameStatus('draw');
       }
-      setGameStatus('draw');
     }
     setFen(chess.fen());
     handleMoveAsync(move);
@@ -78,7 +79,7 @@ export function App() {
         duration = 900;
         break;
       case 'rapid':
-        duration = 8100;
+        duration = 3000;
         break;
     }
     const move = await libraWorkerClient.libraIterativeDeepeningSearch(duration);
