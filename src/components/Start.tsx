@@ -1,12 +1,15 @@
+
 type StartProps = {
   playerColor: 'white' | 'black';
   setPlayerColor: (color: 'white' | 'black') => void;
-  timeControl: 'bullet' | 'blitz' | 'rapid';
-  setTimeControl: (tc: 'bullet' | 'blitz' | 'rapid') => void;
+  timeControl: number;
+  setTimeControl: (tc: number) => void;
   onStart: () => void;
+  level: number;
+  setLevel: (level: number) => void;
 };
 
-export function Start({ playerColor, setPlayerColor, timeControl, setTimeControl, onStart }: StartProps) {
+export function Start({ playerColor, setPlayerColor, timeControl, setTimeControl, level, setLevel, onStart }: StartProps) {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
       <div className={"flex flex-col items-center max-w-sm mx-auto mt-12 p-8 rounded-xl shadow-lg bg-zinc-900 text-zinc-100 min-w-[320px]"}>
@@ -18,12 +21,21 @@ export function Start({ playerColor, setPlayerColor, timeControl, setTimeControl
             <option value="black">Black</option>
           </select>
         </div>
-        <div className="w-full flex items-center justify-between mb-6">
+        <div className="w-full flex items-center justify-between mb-4">
           <label className="text-white">Time Control</label>
-          <select value={timeControl} onChange={e => setTimeControl(e.target.value as 'bullet' | 'blitz' | 'rapid')} className="bg-zinc-700 text-white rounded px-2 py-1">
-            <option value="bullet">Bullet (1+0)</option>
-            <option value="blitz">Blitz (3+0)</option>
-            <option value="rapid">Rapid (15+0)</option>
+          <select value={timeControl} onChange={e => setTimeControl(Number(e.target.value))} className="bg-zinc-700 text-white rounded px-2 py-1">
+            <option value="60">Bullet (1+0)</option>
+            <option value="180">Blitz (3+0)</option>
+            <option value="900">Rapid (15+0)</option>
+          </select>
+        </div>
+        <div className="w-full flex items-center justify-between mb-4">
+          <label className="text-white">Difficulty</label>
+          <select value={level} onChange={e => setLevel(Number(e.target.value))} className="bg-zinc-700 text-white rounded px-2 py-1">
+            <option value={1}>Easy</option>
+            <option value={3}>Medium</option>
+            <option value={9}>Hard</option>
+            <option value={20}>Extreme</option>
           </select>
         </div>
         <button

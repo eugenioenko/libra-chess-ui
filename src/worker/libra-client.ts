@@ -5,6 +5,7 @@ export type LibraWorkerRequest =
   | { type: "libraToFEN" }
   | { type: "libraMove"; payload: { move: string } }
   | { type: "libraLoadInitial" }
+  | { type: "libraZobristHash" }
   | { type: "libraIterativeDeepeningSearch"; payload: { ms: number } };
 
 export type LibraWorkerResponse = {
@@ -19,7 +20,7 @@ class LibraWorkerClient {
   private pending = new Map<number, (res: LibraWorkerResponse) => void>();
 
   constructor() {
-    this.worker = new Worker(new URL("./libraWorker.ts", import.meta.url)); // classic worker, not module
+    this.worker = new Worker(new URL("./libra-worker.ts", import.meta.url)); // classic worker, not module
     this.worker.onmessage = (event: MessageEvent) => {
       const res: LibraWorkerResponse = event.data;
       const cb = this.pending.get(res.id);
@@ -44,6 +45,9 @@ class LibraWorkerClient {
   libraFromFEN(fen: string) {
     return this.call({ type: "libraFromFEN", payload: { fen } });
   }
+  libraZobristHash() {
+    return this.call<string>({ type: "libraZobristHash" });
+  }
   libraToFEN() {
     return this.call<string>({ type: "libraToFEN" });
   }
@@ -61,4 +65,4 @@ class LibraWorkerClient {
   }
 }
 
-export const libraWorkerClient = new LibraWorkerClient();
+export const libraClient = new LibraWorkerClient();

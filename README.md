@@ -57,7 +57,7 @@ The static site will be output to the `dist/` directory.
 ## How It Works
 
 - The Go-based Libra Chess Engine is compiled to WebAssembly (`libra.wasm`).
-- The UI loads the WASM binary and communicates with it via a web worker (`libraWorker.ts`).
+- The UI loads the WASM binary and communicates with it via a web worker (`worker.ts`).
 - All chess logic and move validation are handled by the engine; the UI manages user interaction and display.
 
 ---

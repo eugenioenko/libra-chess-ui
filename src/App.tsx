@@ -1,46 +1,45 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Chessboard } from "react-chessboard";
 import type { Square } from "react-chessboard/dist/chessboard/types";
 import { Timer, type TimerHandle } from "./components/Timer";
-import { libraWorkerClient } from "./worker/libraWorkerClient";
+import { libraClient } from "./worker/libra-client";
 import { Start } from "./components/Start";
 import { Moves } from "./components/Moves";
 import { Chess } from "chess.js";
 import { Over } from "./components/Over";
 import ReactConfetti from "react-confetti";
+import Loader from "./components/Loader";
+
 
 export type PlayerColor = 'white' | 'black';
 export type GameStatus = 'playing' | 'selection' | 'white' | 'black' | 'draw';
-const timeOptions = {
-  bullet: 60,
-  blitz: 180,
-  rapid: 900,
-};
 
 export function App() {
+  const [chessOpeningBook, setChessOpeningBook] = useState<Record<string, string[]> | undefined>(undefined);
   const [gameStatus, setGameStatus] = useState<GameStatus>('selection');
   const [playerColor, setPlayerColor] = useState<PlayerColor>('white');
-  const [timeControl, setTimeControl] = useState<'bullet' | 'blitz' | 'rapid'>('blitz');
+  const [timeControl, setTimeControl] = useState(180);
+  const [level, setLevel] = useState(3);
   const [moveList, setMoveList] = useState<string[]>([]);
   const [currentTurn, setCurrentTurn] = useState<PlayerColor>('white');
-  const [chess, setChess] = useState(new Chess());
+  const [chess] = useState(new Chess());
   const [fen, setFen] = useState(chess.fen());
   const timerRef = useRef<TimerHandle>(null);
 
   useEffect(() => {
-    if (gameStatus === 'playing') {
-      setMoveList([]);
-
-      setCurrentTurn('white');
-      libraWorkerClient.libraLoadInitial().then(async () => {
-        const initial = await libraWorkerClient.libraToFEN();
-        setFen(initial);
-        if (playerColor === 'black') {
-          setTimeout(() => { calculateMoveAsync(); }, 500);
-        }
-      });
+    async function loadOpeningBook() {
+      const response = await fetch('/libra-chess-ui/openings.json');
+      if (!response.ok) {
+        console.warn('Failed to load opening book');
+        return;
+      }
+      const data = await response.json();
+      setChessOpeningBook(data);
     }
-  }, [gameStatus, timeControl, playerColor]);
+    if (!chessOpeningBook) {
+      loadOpeningBook();
+    }
+  }, []);
 
 
   function handleMoveSync(move: string): void {
@@ -62,28 +61,29 @@ export function App() {
   }
 
   async function handleMoveAsync(move: string) {
-    await libraWorkerClient.libraMove(move);
-    const position = await libraWorkerClient.libraToFEN();
+    await libraClient.libraMove(move);
+    const position = await libraClient.libraToFEN();
     setFen(position);
     setMoveList((prev) => [...prev, move]);
     setCurrentTurn((t) => (t === 'white' ? 'black' : 'white'));
   }
 
   async function calculateMoveAsync(): Promise<void> {
-    let duration = 1000;
-    switch (timeControl) {
-      case 'bullet':
-        duration = 1000;
-        break;
-      case 'blitz':
-        duration = 3000;
-        break;
-      case 'rapid':
-        duration = 9000;
-        break;
+    const duration = level * 1000;
+    const hash = await libraClient.libraZobristHash();
+
+    if (chessOpeningBook) {
+      const moves = chessOpeningBook[hash] || [];
+      if (moves.length > 0) {
+        const move = moves[Math.floor(Math.random() * moves.length)];
+        console.log(`info string opening move ${move}`);
+        await handleMoveSync(move);
+        return;
+      }
     }
-    const move = await libraWorkerClient.libraIterativeDeepeningSearch(duration);
-    handleMoveSync(move);
+    const move = await libraClient.libraIterativeDeepeningSearch(duration);
+    await handleMoveSync(move);
+
   }
 
   function handleDrop(from: Square, to: Square): boolean {
@@ -107,10 +107,22 @@ export function App() {
   }
 
 
-  function startGame() {
-    setChess(new Chess());
-    setGameStatus('playing');
+  async function startGame() {
     timerRef.current?.resetTimer();
+    setMoveList([]);
+    setCurrentTurn('white');
+    setGameStatus('playing');
+    await libraClient.libraLoadInitial()
+    const initial = await libraClient.libraToFEN();
+    chess.reset();
+    setFen(initial);
+    if (playerColor === 'black') {
+      await calculateMoveAsync();
+    }
+  }
+
+  if (!chessOpeningBook) {
+    return <Loader />;
   }
 
   return (
@@ -122,7 +134,7 @@ export function App() {
             ref={timerRef}
             running={gameStatus === 'playing'}
             currentTurn={currentTurn}
-            timeControl={timeOptions[timeControl]}
+            timeControl={timeControl}
             onTimeout={(winner) => setGameStatus(winner)}
           />
           <Chessboard
@@ -137,6 +149,8 @@ export function App() {
             timeControl={timeControl}
             setTimeControl={setTimeControl}
             onStart={startGame}
+            level={level}
+            setLevel={setLevel}
           /> : null}
           {gameStatus !== 'selection' && gameStatus !== 'playing' ? <Over
             gameStatus={gameStatus}
@@ -144,9 +158,7 @@ export function App() {
             onRestart={() => setGameStatus('selection')}
           /> : null}
         </div>
-        <div>
-          <Moves moveList={moveList} />
-        </div>
+        <Moves moveList={moveList} />
       </div>
     </>
   );
