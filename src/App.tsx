@@ -50,7 +50,7 @@ export function App() {
     if (chess.game_over()) {
       let winner: 'white' | 'black' | null = null;
       if (chess.in_checkmate()) {
-        winner = currentTurn === 'white' ? 'black' : 'white';
+        winner = currentTurn;
         setGameStatus(winner);
       } else {
         setGameStatus('draw');
@@ -128,8 +128,8 @@ export function App() {
   return (
     <>
       {gameStatus === playerColor ? <ReactConfetti width={window.innerWidth} height={window.innerHeight} /> : null}
-      <div className="relative flex flex-col md:flex-row max-w-6xl mx-auto p-4 gap-4 md:gap-6">
-        <div className="flex-grow flex flex-col gap-4 md:gap-6 relative">
+      <div className="relative flex flex-col md:flex-row max-w-6xl mx-auto p-3 md:p-5 gap-3 md:gap-5">
+        <div className="flex-grow flex flex-col gap-3 md:gap-4 relative">
           <Timer
             ref={timerRef}
             running={gameStatus === 'playing'}
@@ -137,12 +137,14 @@ export function App() {
             timeControl={timeControl}
             onTimeout={(winner) => setGameStatus(winner)}
           />
-          <Chessboard
-            position={fen}
-            onPieceDrop={handleDrop}
-            autoPromoteToQueen={true}
-            boardOrientation={playerColor}
-          />
+          <div className="rounded-xl overflow-hidden shadow-2xl shadow-black/60 ring-1 ring-white/5">
+            <Chessboard
+              position={fen}
+              onPieceDrop={handleDrop}
+              autoPromoteToQueen={true}
+              boardOrientation={playerColor}
+            />
+          </div>
           {gameStatus === 'selection' ? <Start
             playerColor={playerColor}
             setPlayerColor={setPlayerColor}
