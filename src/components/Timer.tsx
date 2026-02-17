@@ -20,10 +20,6 @@ function formatTime(sec: number) {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export interface TimerHandle {
-  resetTimer: () => void;
-}
-
 export const Timer = forwardRef<TimerHandle, TimerProps>(function Timer(
   { running, currentTurn, timeControl, onTimeout },
   ref
@@ -69,15 +65,38 @@ export const Timer = forwardRef<TimerHandle, TimerProps>(function Timer(
     },
   }));
 
+  const whiteActive = currentTurn === 'white' && running;
+  const blackActive = currentTurn === 'black' && running;
+
   return (
-    <div className="grid grid-cols-2 rounded-xl overflow-hidden text-lg md:text-xl text-center">
-      <div className="bg-gray-100 text-black py-2 md:py-3 flex items-center justify-center gap-1">
-        {currentTurn === "white" && <ClockIcon />}
-        {formatTime(whiteTime)}
+    <div className="grid grid-cols-2 gap-4">
+      <div className={`rounded-xl px-4 py-3 flex items-center justify-between transition-all duration-300 ${whiteActive
+          ? 'bg-[#f0f0f0] text-gray-900 shadow-lg shadow-white/10 ring-2 ring-white/40'
+          : 'bg-[#161b22] text-[#8b949e] ring-1 ring-white/5'
+        }`}>
+        <div className="flex items-center gap-2">
+          <span className={`text-[10px] font-semibold uppercase tracking-widest ${whiteActive ? 'text-gray-500' : 'text-[#8b949e]'}`}>
+            White
+          </span>
+          {whiteActive && <ClockIcon />}
+        </div>
+        <span className={`font-mono text-xl font-bold tabular-nums ${whiteActive ? 'text-gray-900' : 'text-[#c9d1d9]'}`}>
+          {formatTime(whiteTime)}
+        </span>
       </div>
-      <div className="bg-black text-gray-100 py-2 md:py-3 flex items-center justify-center gap-1">
-        {currentTurn === "black" && <ClockIcon />}
-        {formatTime(blackTime)}
+      <div className={`rounded-xl px-4 py-3 flex items-center justify-between transition-all duration-300 ${blackActive
+          ? 'bg-[#1c1c1c] text-white shadow-lg shadow-black/40 ring-2 ring-white/20'
+          : 'bg-[#161b22] text-[#8b949e] ring-1 ring-white/5'
+        }`}>
+        <div className="flex items-center gap-2">
+          <span className={`text-[10px] font-semibold uppercase tracking-widest ${blackActive ? 'text-gray-400' : 'text-[#8b949e]'}`}>
+            Black
+          </span>
+          {blackActive && <ClockIcon />}
+        </div>
+        <span className={`font-mono text-xl font-bold tabular-nums ${blackActive ? 'text-white' : 'text-[#c9d1d9]'}`}>
+          {formatTime(blackTime)}
+        </span>
       </div>
     </div>
   );

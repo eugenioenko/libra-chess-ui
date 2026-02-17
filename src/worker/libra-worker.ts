@@ -16,7 +16,7 @@ declare let libra: LibraWasm;
 // Helper to load WASM and bind functions
 async function initWasmLibra() {
   const go = new (self as any).Go();
-  const wasm = await fetch("/libra-chess-ui/libra.wasm?v=1.0.6");
+  const wasm = await fetch("/libra-chess-ui/libra.wasm?v=1.0.7");
   const wasmBuffer = await wasm.arrayBuffer();
   const { instance } = await WebAssembly.instantiate(
     wasmBuffer,

@@ -1,8 +1,10 @@
 import React from "react";
 
 const Loader: React.FC = () => (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 bg-zinc-900">
-    <div className="w-16 h-16 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+  <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0d1117] z-50 gap-4">
+    <div className="text-4xl">♟</div>
+    <div className="w-10 h-10 border-2 border-[#30363d] border-t-emerald-500 rounded-full animate-spin"></div>
+    <p className="text-[#8b949e] text-sm font-medium tracking-wide">Loading engine…</p>
   </div>
 );
 
