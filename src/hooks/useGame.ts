@@ -37,12 +37,14 @@ interface UseGameReturn {
  *   Hard   (6)  →  9%    Expert (12) → 13%
  *   Master (20) → 17%
  */
-function calcThinkTime(remainingSec: number, level: number): number {
-  // Map discrete levels to a percentage of remaining clock time.
-  // Uses a smooth curve so custom levels also work.
-  // Returns milliseconds (what libraIterativeDeepeningSearch expects).
-  const pct = 0.03 + level * 0.007; // 3.7% (easy) … 17% (master)
-  const durationMs = Math.floor(remainingSec * pct * 1000);
+function calcThinkTime(remainingSec: number, level: number, timeControl: number): number {
+  // Map discrete levels to a base percentage of remaining clock time.
+  const pct = 0.02 + level * 0.0055; // 2.5% (easy) … 13% (master)
+
+  // Scale down for fast time controls so the engine doesn't flag in bullet.
+  const tempoFactor = Math.min(1.0, timeControl / 120);
+
+  const durationMs = Math.floor(remainingSec * pct * tempoFactor * 1000);
   return Math.max(500, Math.min(durationMs, 60_000));
 }
 
@@ -113,7 +115,7 @@ export function useGame({
 
     const aiColor: PlayerColor = playerColor === 'white' ? 'black' : 'white';
     const remaining = timerRef.current?.getRemainingTime(aiColor) ?? timeControl;
-    const duration = calcThinkTime(remaining, level);
+    const duration = calcThinkTime(remaining, level, timeControl);
 
     // Try opening book first.
     if (openingBook) {
