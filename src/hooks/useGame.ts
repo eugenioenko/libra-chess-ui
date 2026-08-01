@@ -37,12 +37,13 @@ interface UseGameReturn {
  *   Hard   (6)  →  9%    Expert (12) → 13%
  *   Master (20) → 17%
  */
-function calcThinkTime(remaining: number, level: number): number {
-  // Map discrete levels to a percentage of remaining time.
+function calcThinkTime(remainingSec: number, level: number): number {
+  // Map discrete levels to a percentage of remaining clock time.
   // Uses a smooth curve so custom levels also work.
+  // Returns milliseconds (what libraIterativeDeepeningSearch expects).
   const pct = 0.03 + level * 0.007; // 3.7% (easy) … 17% (master)
-  const duration = Math.floor(remaining * pct);
-  return Math.max(500, duration);
+  const durationMs = Math.floor(remainingSec * pct * 1000);
+  return Math.max(500, durationMs);
 }
 
 /**
