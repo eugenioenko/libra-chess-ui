@@ -27,20 +27,22 @@ interface UseGameReturn {
 /**
  * Calculate how long the engine should think on this move.
  *
- * Two factors at play:
- *  1. A fraction of the remaining clock — higher levels get a larger share.
- *  2. An absolute ceiling that grows with level.
+ * Uses a percentage of the remaining clock — higher levels get a larger
+ * share, so the engine thinks deeper when it matters. The percentage
+ * approach is self-correcting: as the clock runs low the engine
+ * automatically speeds up, so it never flags.
  *
- * The fraction-of-remaining approach is self-correcting: as the clock
- * runs low the engine automatically speeds up, so it never flags.
+ * Level → % of remaining time per move:
+ *   Easy   (1)  →  4%    Medium (3)  →  6%
+ *   Hard   (6)  →  9%    Expert (12) → 13%
+ *   Master (20) → 17%
  */
 function calcThinkTime(remaining: number, level: number): number {
-  // divisor: 30 (easy) down to 10 (master)
-  const divisor = Math.max(10, Math.floor(30 - level));
-  const timeFraction = Math.floor(remaining / divisor);
-  // ceiling: 2s (easy) up to 40s (master)
-  const maxThink = level * 2000;
-  return Math.max(500, Math.min(timeFraction, maxThink));
+  // Map discrete levels to a percentage of remaining time.
+  // Uses a smooth curve so custom levels also work.
+  const pct = 0.03 + level * 0.007; // 3.7% (easy) … 17% (master)
+  const duration = Math.floor(remaining * pct);
+  return Math.max(500, duration);
 }
 
 /**
