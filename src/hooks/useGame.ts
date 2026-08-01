@@ -39,7 +39,8 @@ interface UseGameReturn {
  */
 function calcThinkTime(remainingSec: number, level: number, timeControl: number): number {
   // Map discrete levels to a base percentage of remaining clock time.
-  const pct = 0.02 + level * 0.0055; // 2.5% (easy) … 13% (master)
+  // sqrt curve tightens the gap at the top so Master doesn't dominate the clock.
+  const pct = 0.012 + Math.sqrt(level) * 0.015;
 
   // Scale down for fast time controls so the engine doesn't flag in bullet.
   const tempoFactor = Math.min(1.0, timeControl / 120);
