@@ -43,7 +43,7 @@ function calcThinkTime(remainingSec: number, level: number): number {
   // Returns milliseconds (what libraIterativeDeepeningSearch expects).
   const pct = 0.03 + level * 0.007; // 3.7% (easy) … 17% (master)
   const durationMs = Math.floor(remainingSec * pct * 1000);
-  return Math.max(500, durationMs);
+  return Math.max(500, Math.min(durationMs, 60_000));
 }
 
 /**
