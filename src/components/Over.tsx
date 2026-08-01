@@ -19,36 +19,49 @@ export function Over({ gameStatus, onRestart, playerColor }: OverProps) {
   const playerWon = gameStatus === playerColor;
   const isDraw = gameStatus === 'draw';
 
-  let message = '';
+  let title = '';
+  let subtitle = '';
   let icon = '';
-  let accentClass = '';
-  let scoreClass = '';
+  let accentBorder = '';
+  let accentBg = '';
+  let scoreColor = '';
+  let titleColor = '';
 
   if (playerWon) {
-    message = 'You win!';
+    title = 'You win!';
+    subtitle = 'Well played';
     icon = '🏆';
-    accentClass = 'from-amber-500/20 to-yellow-500/10 ring-amber-500/30';
-    scoreClass = 'text-amber-400';
+    accentBorder = 'ring-amber-500/30';
+    accentBg = 'from-amber-500/8 to-yellow-500/4';
+    scoreColor = 'text-amber-400';
+    titleColor = 'text-amber-100';
   } else if (isDraw) {
-    message = "It's a draw";
+    title = 'Draw';
+    subtitle = 'Well fought';
     icon = '🤝';
-    accentClass = 'from-slate-500/20 to-slate-600/10 ring-slate-500/30';
-    scoreClass = 'text-slate-300';
+    accentBorder = 'ring-slate-500/20';
+    accentBg = 'from-slate-500/8 to-slate-600/4';
+    scoreColor = 'text-slate-300';
+    titleColor = 'text-slate-100';
   } else {
-    message = 'Libra wins';
+    title = 'Libra wins';
+    subtitle = 'Try again';
     icon = '🤖';
-    accentClass = 'from-slate-700/30 to-slate-800/20 ring-slate-600/20';
-    scoreClass = 'text-slate-400';
+    accentBorder = 'ring-slate-600/20';
+    accentBg = 'from-slate-700/8 to-slate-800/4';
+    scoreColor = 'text-slate-400';
+    titleColor = 'text-slate-200';
   }
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div className={`flex flex-col items-center justify-center bg-gradient-to-b ${accentClass} bg-[#161b22] rounded-2xl shadow-2xl shadow-black/60 ring-1 p-8 text-center min-w-[260px]`}>
+    <div className="absolute inset-0 flex items-center justify-center z-10 backdrop-blur-[1px]">
+      <div className={`animate-fade-in flex flex-col items-center justify-center bg-gradient-to-b ${accentBg} bg-[#0d0d13] rounded-2xl ring-1 ${accentBorder} p-8 text-center min-w-[260px] shadow-[0_0_60px_-12px_rgba(0,0,0,0.5)]`}>
         <div className="text-5xl mb-3">{icon}</div>
-        <h2 className="text-2xl font-bold text-[#e6edf3] mb-1 tracking-tight">{message}</h2>
-        <div className={`text-3xl font-bold font-mono tabular-nums mb-6 ${scoreClass}`}>{score}</div>
+        <h2 className={`text-2xl font-bold mb-0.5 tracking-tight ${titleColor}`}>{title}</h2>
+        <p className="text-[#64748b] text-sm mb-4">{subtitle}</p>
+        <div className={`text-4xl font-bold font-mono tabular-nums mb-6 tracking-tight ${scoreColor}`}>{score}</div>
         <button
-          className="bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-semibold rounded-xl px-8 py-2.5 transition-colors duration-150 cursor-pointer text-sm tracking-wide"
+          className="bg-white/[0.06] hover:bg-white/[0.10] active:bg-white/[0.04] text-[#e2e8f0] font-medium rounded-xl px-8 py-2.5 transition-all duration-200 cursor-pointer text-sm ring-1 ring-white/[0.08] hover:ring-white/[0.14]"
           onClick={onRestart}
         >
           Play Again
